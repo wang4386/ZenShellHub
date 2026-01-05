@@ -111,7 +111,7 @@ if (isset($_GET['action'])) {
         .backdrop-blur-heavy { backdrop-filter: blur(40px) saturate(180%); -webkit-backdrop-filter: blur(40px) saturate(180%); }
         .icon-box { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-        .group-hover\/desc\:line-clamp-none:hover { -webkit-line-clamp: unset; }
+        /* Removed old clamp hover utility as it is replaced by JS/Structure logic */
     </style>
 </head>
 <body>
@@ -197,9 +197,26 @@ if (isset($_GET['action'])) {
                                 <Icon name="check" size={14} className={isSelected?"text-white":""} />
                             </button>
                         </div>
+                        
+                        {/* === 优化后的介绍文本区域 ===
+                            使用 "占位+绝对定位悬浮" 策略：
+                            1. 占位层：始终显示前2行，并强制最小高度为 2.5rem (约2行)，防止1行时高度跳动。
+                            2. 悬浮层：优化了边框和阴影质感。
+                        */}
                         <div className="group/desc relative z-10 mb-4">
-                            <p className="text-sm text-gray-500 line-clamp-2 group-hover/desc:line-clamp-none transition-all duration-300 bg-transparent">{script.description}</p>
+                            {/* 占位层：负责布局占位，强制 min-h-[2.5rem] */}
+                            <p className="text-sm text-gray-500 line-clamp-2 transition-opacity duration-200 group-hover/desc:opacity-0 min-h-[2.5rem]">
+                                {script.description}
+                            </p>
+                            
+                            {/* 悬浮层：优化质感 (ring-1 ring-black/5) */}
+                            <div className="absolute -top-2 -left-3 -right-3 opacity-0 scale-95 pointer-events-none group-hover/desc:opacity-100 group-hover/desc:scale-100 group-hover/desc:pointer-events-auto transition-all duration-200 z-50 origin-top">
+                                <div className="bg-white/90 backdrop-blur-xl rounded-xl shadow-2xl border border-gray-100 ring-1 ring-black/5 p-3 text-sm text-gray-700 leading-relaxed break-words">
+                                    {script.description}
+                                </div>
+                            </div>
                         </div>
+
                         {script.image && (
                             <div className="relative mb-4 rounded-xl h-32 w-full z-0 cursor-zoom-in" onMouseEnter={(e) => onImageHover(script.image)} onMouseLeave={() => onImageHover(null)}>
                                 <div className="w-full h-full overflow-hidden rounded-xl bg-gray-50 border border-gray-200/50"><img src={script.image} className="w-full h-full object-cover" onError={(e)=>e.target.style.display='none'}/></div>
@@ -292,7 +309,14 @@ if (isset($_GET['action'])) {
                     if(r.status === 'success') { 
                         setIsAdmin(true); 
                         localStorage.setItem('zen_auth', 'true'); 
-                        setShowLogin(false); 
+                        setShowLogin(false);
+                        
+                        // 登录成功后，如果当前是分享视图，清除 URL 参数并重置视图状态
+                        if (window.location.search.includes('ids=')) {
+                            window.history.replaceState(null, '', window.location.pathname);
+                            setIsSharedView(false);
+                        }
+
                         setToast({message: '登录成功', type: 'success'}); 
                         loadScripts(); // Trigger load on successful login
                     } 
