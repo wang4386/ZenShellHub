@@ -10,6 +10,7 @@
 
 * 💎  **极致 UI 设计** ：全站采用 iOS 级毛玻璃（Backdrop Blur）效果，物理光学边框，深色模式适配。
 * 🚀  **零依赖单文件** ：所有逻辑（前端 React + 后端 PHP）集成在唯一的 `index.php` 中。
+* 💻  **终端客户端** ：提供原生 Shell 脚本 (`zenshell.sh`)，支持在终端直接预览并执行命令。
 * 🔒  **安全隐私** ：
   * 首次访问强制初始化管理员密码。
   * 未登录状态下内容完全模糊遮挡，甚至不加载图片资源。
@@ -42,6 +43,56 @@
 2. 首次加载会弹出 **“系统初始化”** 窗口，请设置您的管理员密码。
 3. 登录后即可开始添加、编辑和管理您的脚本卡片。
 
+## 🐳 Docker 部署 (推荐)
+
+如果您熟悉 Docker，这是最快捷的部署方式，无需配置 PHP 环境。
+
+1. **获取文件** ：下载本仓库的 `docker-compose.yml`、`Dockerfile` 和 `index.php`。
+2. **启动容器** ：
+    在项目目录下运行：
+
+```
+docker-compose up -d
+```
+
+3. **访问** ：打开浏览器访问`http://localhost:8080`。
+
+* 数据将自动持久化存储在当前目录的 `data/` 文件夹中。
+* 默认端口为 `8080`，如需修改请编辑 `docker-compose.yml`。
+
+## 💻 终端客户端 (CLI)
+
+本项目附带一个纯 Shell 编写的终端客户端 `zenshell.sh`，让您无需离开终端即可连接您的 ZenShellHub 节点，快速管理和执行脚本。
+
+### 安装与使用
+
+1. **下载客户端** ：
+   将 `zenshell.sh` 下载到您的本地机器（macOS/Linux）。
+
+```
+bash <(curl -sL https://qninq.cn/file/sh/zenshell.sh)
+bash <(curl -sL https://raw.githubusercontent.com/wang4386/ZenShellHub/refs/heads/main/zenshell.sh)
+```
+
+1. **首次运行配置** ：
+   
+   ```
+   ./zenshell.sh
+   ```
+   
+   * 脚本会提示您输入  **对接端点** （即您部署的 ZenShellHub 网址，如 `http://mysite.com`）。
+   * 输入您的 **管理员密码** 进行验证。
+   * 验证成功后，脚本会自动检测您的 Shell 环境（zsh/bash）并添加快捷指令 `zensh`。
+2. **快捷指令** ：
+    重启终端或重载配置后，您只需输入 `zensh` 即可随时启动：
+
+```
+zensh
+```
+
+1. **卸载** ：
+    在客户端主菜单中输入 `u` 即可卸载客户端并清理相关配置文件及别名。
+
 ## 📸 预览 (Screenshots)
 
 ![未登录](https://assets.qninq.cn/qning/WIg3sJqj.webp)
@@ -65,9 +116,11 @@ location = /data.json {
 
 ## 🤝 贡献 (Contributing)
 
-虽然这是一个单文件项目，但欢迎提交 Issue 或 PR 进行优化：
+虽然这是一个单文件项目，但欢迎提交 Issue 或 PR 进行优化。
 
 ## 📄 开源协议
+
+https://github.com/wang4386/ZenShellHub
 
 本项目采用 [MIT License](https://mit-license.org/) 开源。
 
