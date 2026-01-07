@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  zenshellhub:
+    build: .
+    container_name: zenshellhub
+    ports:
+      - "8080:80"
+    environment:
+      # 指定数据存储路径到容器内的独立目录
+      - ZEN_DATA_PATH=/data/data.json
+      # 跳过 .htaccess 生成（Docker 环境通常不需要防御文件下载，或者在网关层处理）
+      - ZEN_SKIP_HTACCESS=true
+    volumes:
+      # 挂载数据卷，实现数据持久化
+      - ./data:/data
+    restart: unless-stopped
